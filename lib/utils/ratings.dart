@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
 
-// convert rating to stars
 Widget ratingStars(double rating) {
   final stars = <Widget>[];
   const int starCount = 5;
