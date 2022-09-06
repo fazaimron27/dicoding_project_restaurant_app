@@ -22,7 +22,19 @@ class RestaurantDetail extends StatelessWidget {
                   children: [
                     Hero(
                       tag: restaurant.pictureId,
-                      child: Image.network(restaurant.pictureId),
+                      child: Container(
+                        height: 300,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(restaurant.pictureId),
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                          ),
+                        ),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 5, left: 5),
@@ -178,7 +190,7 @@ class RestaurantDetail extends StatelessWidget {
                             child: Column(
                               children: [
                                 Container(
-                                  width: 150,
+                                  width: 200,
                                   height: 150,
                                   decoration: BoxDecoration(
                                     image: const DecorationImage(
@@ -220,7 +232,7 @@ class RestaurantDetail extends StatelessWidget {
                             child: Column(
                               children: [
                                 Container(
-                                  width: 150,
+                                  width: 200,
                                   height: 150,
                                   decoration: BoxDecoration(
                                     image: const DecorationImage(

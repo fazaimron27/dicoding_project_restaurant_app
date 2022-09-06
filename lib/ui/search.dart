@@ -9,7 +9,7 @@ class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
 
   @override
-  _SearchState createState() => _SearchState();
+  State createState() => _SearchState();
 }
 
 class _SearchState extends State<Search> {
@@ -25,15 +25,6 @@ class _SearchState extends State<Search> {
         restaurantFromJson(data).restaurants;
     _allRestaurants = restaurants;
     return restaurants;
-  }
-
-  Future<List<RestaurantElement>> _searchData(String query) async {
-    final List<RestaurantElement> restaurants = await _initializeData();
-    final List<RestaurantElement> filteredRestaurants = restaurants
-        .where((restaurant) =>
-            restaurant.name.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-    return filteredRestaurants;
   }
 
   List<RestaurantElement> _foundRestaurants = [];
@@ -131,16 +122,19 @@ class _SearchState extends State<Search> {
                           padding: const EdgeInsets.all(16.0),
                           child: Row(
                             children: <Widget>[
-                              Container(
-                                width: 130,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                        _foundRestaurants[index].pictureId),
-                                    fit: BoxFit.cover,
+                              Hero(
+                                tag: _foundRestaurants[index].pictureId,
+                                child: Container(
+                                  width: 130,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                          _foundRestaurants[index].pictureId),
+                                      fit: BoxFit.cover,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
                               Padding(

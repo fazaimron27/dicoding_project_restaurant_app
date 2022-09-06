@@ -98,15 +98,18 @@ class _BuildRestaurantItem extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: <Widget>[
-            Container(
-              width: 130,
-              height: 100,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(restaurant.pictureId),
-                  fit: BoxFit.cover,
+            Hero(
+              tag: restaurant.pictureId,
+              child: Container(
+                width: 130,
+                height: 100,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(restaurant.pictureId),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                borderRadius: BorderRadius.circular(10),
               ),
             ),
             Padding(
