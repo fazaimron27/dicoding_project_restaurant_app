@@ -141,7 +141,7 @@ class _BuildRestaurantItem extends StatelessWidget {
                         ),
                         child: Icon(
                           Icons.location_on,
-                          color: secondaryColor,
+                          color: Colors.grey,
                           size: 16,
                         ),
                       ),

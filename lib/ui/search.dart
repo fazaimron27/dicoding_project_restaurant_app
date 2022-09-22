@@ -168,7 +168,7 @@ class _SearchState extends State<Search> {
                                           ),
                                           child: Icon(
                                             Icons.location_on,
-                                            color: secondaryColor,
+                                            color: Colors.grey,
                                             size: 16,
                                           ),
                                         ),

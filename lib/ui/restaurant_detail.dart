@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dicoding_project_restaurant_app/common/styles.dart';
 import 'package:dicoding_project_restaurant_app/models/restaurant.dart';
 
 class RestaurantDetail extends StatelessWidget {
@@ -87,7 +86,7 @@ class RestaurantDetail extends StatelessWidget {
                         ),
                         child: Icon(
                           Icons.location_on,
-                          color: secondaryColor,
+                          color: Colors.grey,
                           size: 16,
                         ),
                       ),
@@ -112,7 +111,7 @@ class RestaurantDetail extends StatelessWidget {
                         ),
                         child: Icon(
                           Icons.star,
-                          color: secondaryColor,
+                          color: Colors.amber,
                           size: 16,
                         ),
                       ),

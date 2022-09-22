@@ -1,32 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:dicoding_project_restaurant_app/common/styles.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 Widget ratingStars(double rating) {
-  final stars = <Widget>[];
-  const int starCount = 5;
-  for (var i = 0; i < starCount; i++) {
-    if (i >= rating) {
-      stars.add(const Icon(
-        Icons.star_border,
-        color: secondaryColor,
-        size: 16,
-      ));
-    } else if (i > rating - 1 && i < rating) {
-      stars.add(const Icon(
-        Icons.star_half,
-        color: secondaryColor,
-        size: 16,
-      ));
-    } else {
-      stars.add(const Icon(
-        Icons.star,
-        color: secondaryColor,
-        size: 16,
-      ));
-    }
-  }
-
-  return Row(
-    children: stars,
+  return RatingBarIndicator(
+    rating: rating,
+    itemBuilder: (context, index) => const Icon(
+      Icons.star,
+      color: Colors.amber,
+    ),
+    itemCount: 5,
+    itemSize: 16,
+    direction: Axis.horizontal,
   );
 }
