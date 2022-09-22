@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
-import 'package:dicoding_project_restaurant_app/models/restaurant.dart';
 import 'package:dicoding_project_restaurant_app/home.dart';
 import 'package:dicoding_project_restaurant_app/ui/splash_screen.dart';
 import 'package:dicoding_project_restaurant_app/ui/restaurant_detail.dart';
@@ -31,9 +30,8 @@ class MyApp extends StatelessWidget {
       routes: {
         SplashScreen.routeName: (context) => const SplashScreen(),
         Home.routeName: (context) => const Home(),
-        RestaurantDetail.routeName: (context) => RestaurantDetail(
-              restaurant: ModalRoute.of(context)?.settings.arguments
-                  as RestaurantElement,
+        RestaurantDetailPage.routeName: (context) => RestaurantDetailPage(
+              id: ModalRoute.of(context)?.settings.arguments as String,
             ),
       },
     );

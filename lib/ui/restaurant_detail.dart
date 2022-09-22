@@ -1,16 +1,110 @@
 import 'package:flutter/material.dart';
-import 'package:dicoding_project_restaurant_app/models/restaurant.dart';
+import 'package:dicoding_project_restaurant_app/common/styles.dart';
+import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
+import 'package:dicoding_project_restaurant_app/data/models/restaurant_detail.dart';
+import 'package:dicoding_project_restaurant_app/utils/custom_error_exception.dart';
 
-class RestaurantDetail extends StatelessWidget {
+class RestaurantDetailPage extends StatelessWidget {
   static const routeName = '/restaurant_detail';
 
-  final RestaurantElement restaurant;
+  final String id;
 
-  const RestaurantDetail({Key? key, required this.restaurant})
-      : super(key: key);
+  const RestaurantDetailPage({Key? key, required this.id}) : super(key: key);
+
+  Future<RestaurantDetail> _restaurantDetail() async {
+    return await ApiService().getRestaurantById(id);
+  }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _restaurantDetail(),
+      builder: (context, AsyncSnapshot<RestaurantDetail> snapshot) {
+        var state = snapshot.connectionState;
+        if (state != ConnectionState.done) {
+          return const Center(
+              child: CircularProgressIndicator(
+            color: secondaryColor,
+          ));
+        } else {
+          if (snapshot.hasData) {
+            return _buildDetailRestaurant(snapshot, context);
+          } else if (snapshot.hasError) {
+            return Scaffold(
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomErrorException(
+                    icon: const Icon(
+                      Icons.error_outline,
+                      size: 50,
+                      color: secondaryColor,
+                    ),
+                    message: snapshot.error.toString().split('Exception: ')[1],
+                  ),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: secondaryColor,
+                      side: const BorderSide(color: secondaryColor),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Back',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                        fontStyle: FontStyle.italic,
+                        color: secondaryColor,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            );
+          } else {
+            return Scaffold(
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CustomErrorException(
+                    icon: Icon(
+                      Icons.error_outline,
+                      size: 50,
+                      color: secondaryColor,
+                    ),
+                    message: 'Something went wrong',
+                  ),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: secondaryColor,
+                      side: const BorderSide(color: secondaryColor),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Back',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                        fontStyle: FontStyle.italic,
+                        color: secondaryColor,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+        }
+      },
+    );
+  }
+
+  Scaffold _buildDetailRestaurant(
+      AsyncSnapshot<RestaurantDetail> snapshot, BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -20,12 +114,13 @@ class RestaurantDetail extends StatelessWidget {
                 Stack(
                   children: [
                     Hero(
-                      tag: restaurant.pictureId,
+                      tag: snapshot.data!.restaurant.pictureId,
                       child: Container(
                         height: 300,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(restaurant.pictureId),
+                            image: NetworkImage(
+                                'https://restaurant-api.dicoding.dev/images/large/${snapshot.data!.restaurant.pictureId}'),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: const BorderRadius.only(
@@ -68,7 +163,7 @@ class RestaurantDetail extends StatelessWidget {
                       top: 5,
                     ),
                     child: Text(
-                      restaurant.name,
+                      snapshot.data!.restaurant.name,
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -95,13 +190,78 @@ class RestaurantDetail extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.only(top: 3),
                           child: Text(
-                            restaurant.city,
+                            snapshot.data!.restaurant.city,
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                             ),
                           ),
                         ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(
+                          top: 3,
+                          right: 8,
+                          left: 15,
+                        ),
+                        child: Icon(
+                          Icons.home,
+                          color: Colors.grey,
+                          size: 16,
+                        ),
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.only(top: 3),
+                            child: Text(
+                              snapshot.data!.restaurant.address,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(
+                          top: 3,
+                          right: 8,
+                        ),
+                        child: Icon(
+                          Icons.location_on,
+                          color: secondaryColor,
+                          size: 16,
+                        ),
+                      ),
+                      Row(
+                        children: snapshot.data!.restaurant.categories
+                            .map((category) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 3),
+                            child: Text(
+                              category.name +
+                                  (category ==
+                                          snapshot
+                                              .data!.restaurant.categories.last
+                                      ? ''
+                                      : ', '),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ),
                       const Padding(
                         padding: EdgeInsets.only(
@@ -120,7 +280,7 @@ class RestaurantDetail extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.only(top: 3),
                           child: Text(
-                            restaurant.rating.toString(),
+                            snapshot.data!.restaurant.rating.toString(),
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -147,7 +307,7 @@ class RestaurantDetail extends StatelessWidget {
                       top: 3,
                     ),
                     child: Text(
-                      restaurant.description,
+                      snapshot.data!.restaurant.description,
                       style: const TextStyle(
                         color: Colors.black,
                       ),
@@ -182,7 +342,8 @@ class RestaurantDetail extends StatelessWidget {
                     height: 200,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      children: restaurant.menus.foods.map((food) {
+                      children:
+                          snapshot.data!.restaurant.menus.foods.map((food) {
                         return Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Card(
@@ -224,7 +385,8 @@ class RestaurantDetail extends StatelessWidget {
                     height: 200,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      children: restaurant.menus.drinks.map((drink) {
+                      children:
+                          snapshot.data!.restaurant.menus.drinks.map((drink) {
                         return Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Card(
@@ -250,11 +412,100 @@ class RestaurantDetail extends StatelessWidget {
                       }).toList(),
                     ),
                   ),
+                  // Customer Reviews
+                  const Padding(
+                    padding: EdgeInsets.only(
+                      top: 20,
+                    ),
+                    child: Text(
+                      "Customer Reviews",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: SizedBox(
+                      height: 500,
+                      child: ListView(
+                        scrollDirection: Axis.vertical,
+                        children: snapshot.data!.restaurant.customerReviews
+                            .map((review) {
+                          return Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Card(
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                              'https://ui-avatars.com/api/?background=736CED&color=fff&name=${review.name}'),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              review.name,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            Text(
+                                              review.date,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        review.review,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: secondaryColor,
+        foregroundColor: Colors.white,
+        onPressed: () {
+          // Respond to button press
+        },
+        icon: const Icon(Icons.create),
+        label: const Text('Write Review'),
       ),
     );
   }
