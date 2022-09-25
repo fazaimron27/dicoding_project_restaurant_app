@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
 import 'package:dicoding_project_restaurant_app/ui/restaurants.dart';
 import 'package:dicoding_project_restaurant_app/ui/search.dart';
+import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
+import 'package:dicoding_project_restaurant_app/provider/search_provider.dart';
+import 'package:dicoding_project_restaurant_app/provider/restaurant_provider.dart';
 
 class Home extends StatefulWidget {
   static const routeName = '/home';
@@ -15,9 +19,15 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _pages = <Widget>[
-    Restaurants(),
-    Search(),
+  static final List<Widget> _pages = <Widget>[
+    ChangeNotifierProvider<RestaurantsProvider>(
+      create: (_) => RestaurantsProvider(apiService: ApiService()),
+      child: const Restaurants(),
+    ),
+    ChangeNotifierProvider<SearchProvider>(
+      create: (_) => SearchProvider(apiService: ApiService()),
+      child: const Search(),
+    ),
   ];
 
   void _onItemTapped(int index) {

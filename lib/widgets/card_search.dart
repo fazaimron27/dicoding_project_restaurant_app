@@ -1,3 +1,4 @@
+import 'package:dicoding_project_restaurant_app/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:dicoding_project_restaurant_app/utils/ratings.dart';
 import 'package:dicoding_project_restaurant_app/data/models/restaurant_search.dart';
@@ -26,7 +27,8 @@ class CardSearch extends StatelessWidget {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: NetworkImage(
-                        'https://restaurant-api.dicoding.dev/images/small/${restaurant.pictureId}'),
+                      StringUtils.getImgUrl(restaurant.pictureId, 'small'),
+                    ),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(10),

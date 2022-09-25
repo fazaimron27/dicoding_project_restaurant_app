@@ -1,29 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
-import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
-import 'package:dicoding_project_restaurant_app/data/models/restaurant_search.dart';
 import 'package:dicoding_project_restaurant_app/widgets/card_search.dart';
+import 'package:dicoding_project_restaurant_app/provider/search_provider.dart';
 import 'package:dicoding_project_restaurant_app/utils/custom_error_exception.dart';
+import 'package:provider/provider.dart';
 
-class Search extends StatefulWidget {
+class Search extends StatelessWidget {
   const Search({Key? key}) : super(key: key);
-
-  @override
-  State createState() => _SearchState();
-}
-
-class _SearchState extends State<Search> {
-  String query = '';
-
-  void _runFilter(String enteredKeyword) {
-    setState(() {
-      query = enteredKeyword;
-    });
-  }
-
-  Future<RestaurantSearch> _searchRestaurants() async {
-    return await ApiService().searchRestaurant(query);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +37,8 @@ class _SearchState extends State<Search> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            TextField(
+            Consumer<SearchProvider>(
+              builder: (context, state, _) => TextField(
                 decoration: const InputDecoration(
                   hintText: "Search",
                   suffixIcon: Icon(Icons.search),
@@ -69,63 +53,48 @@ class _SearchState extends State<Search> {
                     ),
                   ),
                 ),
-                onChanged: (value) => _runFilter(value)),
+                onChanged: (value) => state.runSearch(value),
+              ),
+            ),
             const SizedBox(
               height: 16,
             ),
             Expanded(
-              child: FutureBuilder(
-                future: _searchRestaurants(),
-                builder: ((context, AsyncSnapshot<RestaurantSearch> snapshot) {
-                  var state = snapshot.connectionState;
-                  if (state != ConnectionState.done) {
-                    return const Center(
-                        child: CircularProgressIndicator(
+              child: Consumer<SearchProvider>(builder: (context, state, _) {
+                if (state.state == ResultState.loading) {
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: secondaryColor,
+                  ));
+                } else if (state.state == ResultState.hasData) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: state.result.restaurants.length,
+                    itemBuilder: (context, index) {
+                      var restaurant = state.result.restaurants[index];
+                      return CardSearch(restaurant: restaurant);
+                    },
+                  );
+                } else if (state.state == ResultState.noData) {
+                  return const CustomErrorException(
+                    icon: Icon(
+                      Icons.error_outline,
+                      size: 50,
                       color: secondaryColor,
-                    ));
-                  } else {
-                    if (snapshot.hasData) {
-                      if (snapshot.data?.founded == 0) {
-                        return const CustomErrorException(
-                          icon: Icon(
-                            Icons.error_outline,
-                            size: 50,
-                            color: secondaryColor,
-                          ),
-                          message: 'No restaurant found',
-                        );
-                      } else {
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: snapshot.data?.restaurants.length,
-                          itemBuilder: (context, index) {
-                            var restaurant = snapshot.data?.restaurants[index];
-                            return CardSearch(restaurant: restaurant!);
-                          },
-                        );
-                      }
-                    } else if (snapshot.hasError) {
-                      return const CustomErrorException(
-                        icon: Icon(
-                          Icons.looks,
-                          size: 50,
-                          color: secondaryColor,
-                        ),
-                        message: 'Find the restaurant you want',
-                      );
-                    } else {
-                      return const CustomErrorException(
-                        icon: Icon(
-                          Icons.error_outline,
-                          size: 50,
-                          color: secondaryColor,
-                        ),
-                        message: 'Something went wrong',
-                      );
-                    }
-                  }
-                }),
-              ),
+                    ),
+                    message: 'No restaurant found',
+                  );
+                } else {
+                  return const CustomErrorException(
+                    icon: Icon(
+                      Icons.looks,
+                      size: 50,
+                      color: secondaryColor,
+                    ),
+                    message: 'Find the restaurant you want',
+                  );
+                }
+              }),
             ),
           ],
         ),

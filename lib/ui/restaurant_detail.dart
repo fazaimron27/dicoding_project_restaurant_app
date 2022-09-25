@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
+import 'package:dicoding_project_restaurant_app/ui/review.dart';
 import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
-import 'package:dicoding_project_restaurant_app/data/models/restaurant_detail.dart';
+import 'package:dicoding_project_restaurant_app/utils/string_utils.dart';
 import 'package:dicoding_project_restaurant_app/utils/custom_error_exception.dart';
+import 'package:dicoding_project_restaurant_app/provider/review_provider.dart'
+    as review_provider;
+import 'package:dicoding_project_restaurant_app/provider/restaurant_detail_provider.dart'
+    as restaurant_detai_provider;
 
-class RestaurantDetailPage extends StatefulWidget {
+class RestaurantDetailPage extends StatelessWidget {
   static const routeName = '/restaurant_detail';
 
   final String id;
@@ -12,43 +18,22 @@ class RestaurantDetailPage extends StatefulWidget {
   const RestaurantDetailPage({Key? key, required this.id}) : super(key: key);
 
   @override
-  State<RestaurantDetailPage> createState() => _RestaurantDetailPageState();
-}
-
-class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
-  late Future<RestaurantDetail> _restaurantDetail;
-
-  @override
-  void initState() {
-    super.initState();
-    _restaurantDetail = ApiService().getRestaurantById(widget.id);
-  }
-
-  void _refresh() {
-    setState(() {
-      _restaurantDetail = ApiService().getRestaurantById(widget.id);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _restaurantDetail,
-      builder: (context, AsyncSnapshot<RestaurantDetail> snapshot) {
-        var state = snapshot.connectionState;
-        if (state != ConnectionState.done) {
+    return Consumer<restaurant_detai_provider.RestaurantDetailProvider>(
+      builder: (context, state, _) {
+        if (state.state == restaurant_detai_provider.ResultState.loading) {
           return const Center(
               child: CircularProgressIndicator(
             color: secondaryColor,
           ));
+        } else if (state.state ==
+            restaurant_detai_provider.ResultState.hasData) {
+          return _buildDetailRestaurant(state, context);
+        } else if (state.state ==
+            restaurant_detai_provider.ResultState.noData) {
+          return _buildHasError(state, context);
         } else {
-          if (snapshot.hasData) {
-            return _buildDetailRestaurant(snapshot, context);
-          } else if (snapshot.hasError) {
-            return _buildHasError(snapshot, context);
-          } else {
-            return _buildError(context);
-          }
+          return _buildError(context);
         }
       },
     );
@@ -91,7 +76,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   }
 
   Scaffold _buildHasError(
-      AsyncSnapshot<RestaurantDetail> snapshot, BuildContext context) {
+      restaurant_detai_provider.RestaurantDetailProvider state,
+      BuildContext context) {
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -102,7 +88,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               size: 50,
               color: secondaryColor,
             ),
-            message: snapshot.error.toString().split('Exception: ')[1],
+            message: state.message,
           ),
           OutlinedButton(
             style: OutlinedButton.styleFrom(
@@ -128,7 +114,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   }
 
   Scaffold _buildDetailRestaurant(
-      AsyncSnapshot<RestaurantDetail> snapshot, BuildContext context) {
+      restaurant_detai_provider.RestaurantDetailProvider state,
+      BuildContext context) {
     TextEditingController nameController = TextEditingController();
     TextEditingController reviewController = TextEditingController();
     String name = '';
@@ -143,13 +130,15 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 Stack(
                   children: [
                     Hero(
-                      tag: snapshot.data!.restaurant.pictureId,
+                      tag: state.result.restaurant.pictureId,
                       child: Container(
                         height: 300,
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: NetworkImage(
-                                'https://restaurant-api.dicoding.dev/images/large/${snapshot.data!.restaurant.pictureId}'),
+                              StringUtils.getImgUrl(
+                                  state.result.restaurant.pictureId, 'large'),
+                            ),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: const BorderRadius.only(
@@ -192,7 +181,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       top: 5,
                     ),
                     child: Text(
-                      snapshot.data!.restaurant.name,
+                      state.result.restaurant.name,
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -219,7 +208,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         child: Container(
                           padding: const EdgeInsets.only(top: 3),
                           child: Text(
-                            snapshot.data!.restaurant.city,
+                            state.result.restaurant.city,
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -245,7 +234,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                           child: Container(
                             padding: const EdgeInsets.only(top: 3),
                             child: Text(
-                              snapshot.data!.restaurant.address,
+                              state.result.restaurant.address,
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
@@ -272,15 +261,15 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         ),
                       ),
                       Row(
-                        children: snapshot.data!.restaurant.categories
-                            .map((category) {
+                        children:
+                            state.result.restaurant.categories.map((category) {
                           return Padding(
                             padding: const EdgeInsets.only(top: 3),
                             child: Text(
                               category.name +
                                   (category ==
-                                          snapshot
-                                              .data!.restaurant.categories.last
+                                          state
+                                              .result.restaurant.categories.last
                                       ? ''
                                       : ', '),
                               style: const TextStyle(
@@ -309,7 +298,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         child: Container(
                           padding: const EdgeInsets.only(top: 3),
                           child: Text(
-                            snapshot.data!.restaurant.rating.toString(),
+                            state.result.restaurant.rating.toString(),
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -336,7 +325,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       top: 3,
                     ),
                     child: Text(
-                      snapshot.data!.restaurant.description,
+                      state.result.restaurant.description,
                       style: const TextStyle(
                         color: Colors.black,
                       ),
@@ -371,8 +360,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                     height: 200,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      children:
-                          snapshot.data!.restaurant.menus.foods.map((food) {
+                      children: state.result.restaurant.menus.foods.map((food) {
                         return Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Card(
@@ -415,7 +403,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children:
-                          snapshot.data!.restaurant.menus.drinks.map((drink) {
+                          state.result.restaurant.menus.drinks.map((drink) {
                         return Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Card(
@@ -441,101 +429,63 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       }).toList(),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(
-                      top: 20,
-                    ),
-                    child: Text(
-                      "Customer Reviews",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: SizedBox(
-                      height: 400,
-                      child: ListView(
-                        scrollDirection: Axis.vertical,
-                        children: snapshot.data!.restaurant.customerReviews
-                            .map((review) {
-                          return Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Card(
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              'https://ui-avatars.com/api/?background=736CED&color=fff&name=${review.name}'),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              review.name,
-                                              style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            Text(
-                                              review.date,
-                                              style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Text(
-                                        review.review,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: secondaryColor,
-        foregroundColor: Colors.white,
-        onPressed: () {
-          _buildDialogReview(
-              context, nameController, name, reviewController, review);
-        },
-        icon: const Icon(Icons.create),
-        label: const Text('Write Review'),
-      ),
+      persistentFooterButtons: [
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 5,
+            bottom: 2.5,
+            left: 10,
+            right: 10,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, Review.routeName,
+                      arguments: state.result.restaurant.id);
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  backgroundColor: secondaryColor,
+                ),
+                child: const Text(
+                  "See All Reviews",
+                  style: TextStyle(
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _buildDialogReview(
+                      context, nameController, name, reviewController, review);
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  backgroundColor: secondaryColor,
+                ),
+                child: const Text(
+                  "Write a Review",
+                  style: TextStyle(
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -580,6 +530,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                nameController.clear();
+                reviewController.clear();
               },
               child: const Text('Cancel', style: TextStyle(color: Colors.red)),
             ),
@@ -592,33 +544,26 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                     ),
                   );
                 } else {
-                  try {
-                    ApiService()
-                        .postReview(widget.id, name, review)
-                        .then((value) {
-                      if (value.error) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Failed to submit review'),
-                          ),
-                        );
-                      } else {
-                        Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Review submitted'),
-                          ),
-                        );
-                        _refresh();
-                      }
-                    });
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(e.toString()),
-                      ),
-                    );
-                  }
+                  review_provider.ReviewProvider(apiService: ApiService())
+                      .submitReview(id, name, review)
+                      .then((value) {
+                    if (value.error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Failed to submit review'),
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Review submitted'),
+                        ),
+                      );
+                      nameController.clear();
+                      reviewController.clear();
+                    }
+                  });
                 }
               },
               child:

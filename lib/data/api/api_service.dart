@@ -26,6 +26,15 @@ class ApiService {
     }
   }
 
+  Future<ReviewResponse> getReviewById(id) async {
+    final response = await http.get(Uri.parse("${_baseUrl}detail/$id"));
+    if (response.statusCode == 200) {
+      return ReviewResponse.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load review');
+    }
+  }
+
   Future<RestaurantSearch> searchRestaurant(query) async {
     final response = await http.get(Uri.parse("${_baseUrl}search?q=$query"));
     if (response.statusCode == 200) {
