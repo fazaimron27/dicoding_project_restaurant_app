@@ -9,7 +9,7 @@ Widget ratingStars(double rating) {
       color: Colors.amber,
     ),
     itemCount: 5,
-    itemSize: 16,
+    itemSize: 14,
     direction: Axis.horizontal,
   );
 }

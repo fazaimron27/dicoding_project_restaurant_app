@@ -185,7 +185,7 @@ class RestaurantDetailPage extends StatelessWidget {
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: 24,
+                        fontSize: 20,
                       ),
                     ),
                   ),
@@ -200,7 +200,7 @@ class RestaurantDetailPage extends StatelessWidget {
                         child: Icon(
                           Icons.location_on,
                           color: Colors.grey,
-                          size: 16,
+                          size: 14,
                         ),
                       ),
                       Align(
@@ -211,7 +211,7 @@ class RestaurantDetailPage extends StatelessWidget {
                             state.result.restaurant.city,
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: 14,
                             ),
                           ),
                         ),
@@ -225,7 +225,7 @@ class RestaurantDetailPage extends StatelessWidget {
                         child: Icon(
                           Icons.home,
                           color: Colors.grey,
-                          size: 16,
+                          size: 14,
                         ),
                       ),
                       Expanded(
@@ -237,7 +237,7 @@ class RestaurantDetailPage extends StatelessWidget {
                               state.result.restaurant.address,
                               style: const TextStyle(
                                 color: Colors.black,
-                                fontSize: 16,
+                                fontSize: 14,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -257,7 +257,7 @@ class RestaurantDetailPage extends StatelessWidget {
                         child: Icon(
                           Icons.category,
                           color: secondaryColor,
-                          size: 16,
+                          size: 14,
                         ),
                       ),
                       Row(
@@ -274,7 +274,7 @@ class RestaurantDetailPage extends StatelessWidget {
                                       : ', '),
                               style: const TextStyle(
                                 color: Colors.black,
-                                fontSize: 16,
+                                fontSize: 14,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -290,7 +290,7 @@ class RestaurantDetailPage extends StatelessWidget {
                         child: Icon(
                           Icons.star,
                           color: Colors.amber,
-                          size: 16,
+                          size: 14,
                         ),
                       ),
                       Align(
@@ -301,7 +301,7 @@ class RestaurantDetailPage extends StatelessWidget {
                             state.result.restaurant.rating.toString(),
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: 14,
                             ),
                           ),
                         ),
@@ -316,7 +316,8 @@ class RestaurantDetailPage extends StatelessWidget {
                       "Description",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                   ),
@@ -340,7 +341,8 @@ class RestaurantDetailPage extends StatelessWidget {
                       "Menus",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                   ),
@@ -352,12 +354,12 @@ class RestaurantDetailPage extends StatelessWidget {
                       "Foods",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 16,
+                        fontSize: 14,
                       ),
                     ),
                   ),
                   SizedBox(
-                    height: 200,
+                    height: 150,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: state.result.restaurant.menus.foods.map((food) {
@@ -367,8 +369,8 @@ class RestaurantDetailPage extends StatelessWidget {
                             child: Column(
                               children: [
                                 Container(
-                                  width: 200,
-                                  height: 150,
+                                  width: 150,
+                                  height: 100,
                                   decoration: BoxDecoration(
                                     image: const DecorationImage(
                                       image:
@@ -378,7 +380,14 @@ class RestaurantDetailPage extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
-                                Text(food.name),
+                                Text(
+                                  food.name,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -394,12 +403,12 @@ class RestaurantDetailPage extends StatelessWidget {
                       "Drinks",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 16,
+                        fontSize: 14,
                       ),
                     ),
                   ),
                   SizedBox(
-                    height: 200,
+                    height: 150,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children:
@@ -410,8 +419,8 @@ class RestaurantDetailPage extends StatelessWidget {
                             child: Column(
                               children: [
                                 Container(
-                                  width: 200,
-                                  height: 150,
+                                  width: 150,
+                                  height: 100,
                                   decoration: BoxDecoration(
                                     image: const DecorationImage(
                                       image:
@@ -421,7 +430,14 @@ class RestaurantDetailPage extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
-                                Text(drink.name),
+                                Text(
+                                  drink.name,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -429,63 +445,56 @@ class RestaurantDetailPage extends StatelessWidget {
                       }).toList(),
                     ),
                   ),
+                  Center(
+                    child: Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, Review.routeName,
+                                    arguments: state.result.restaurant.id);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                backgroundColor: secondaryColor,
+                              ),
+                              child: const Text(
+                                "See Reviews",
+                                style: TextStyle(
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                _buildDialogReview(context, nameController,
+                                    name, reviewController, review);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                backgroundColor: secondaryColor,
+                              ),
+                              child: const Text(
+                                "Write Review",
+                                style: TextStyle(
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )),
+                  ),
                 ],
               ),
             ),
           ],
         ),
       ),
-      persistentFooterButtons: [
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 5,
-            bottom: 2.5,
-            left: 10,
-            right: 10,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, Review.routeName,
-                      arguments: state.result.restaurant.id);
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  backgroundColor: secondaryColor,
-                ),
-                child: const Text(
-                  "See All Reviews",
-                  style: TextStyle(
-                    color: primaryColor,
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _buildDialogReview(
-                      context, nameController, name, reviewController, review);
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  backgroundColor: secondaryColor,
-                ),
-                child: const Text(
-                  "Write a Review",
-                  style: TextStyle(
-                    color: primaryColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 

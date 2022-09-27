@@ -22,7 +22,7 @@ class CardSearch extends StatelessWidget {
             Hero(
               tag: restaurant.pictureId,
               child: Container(
-                width: 130,
+                width: 115,
                 height: 100,
                 decoration: BoxDecoration(
                   image: DecorationImage(
@@ -50,7 +50,7 @@ class CardSearch extends StatelessWidget {
                         restaurant.name,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -66,7 +66,7 @@ class CardSearch extends StatelessWidget {
                           child: Icon(
                             Icons.location_on,
                             color: Colors.grey,
-                            size: 16,
+                            size: 14,
                           ),
                         ),
                         Align(
@@ -77,7 +77,7 @@ class CardSearch extends StatelessWidget {
                               restaurant.city,
                               style: const TextStyle(
                                 color: Colors.black,
-                                fontSize: 16,
+                                fontSize: 14,
                               ),
                             ),
                           ),

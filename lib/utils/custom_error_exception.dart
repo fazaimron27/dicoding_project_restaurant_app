@@ -11,21 +11,25 @@ class CustomErrorException extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          icon,
-          Text(
-            message,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.normal,
-              fontStyle: FontStyle.italic,
-              color: secondaryColor,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 25),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            icon,
+            Text(
+              message,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.italic,
+                overflow: TextOverflow.clip,
+                color: secondaryColor,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

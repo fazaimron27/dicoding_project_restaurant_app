@@ -56,9 +56,6 @@ class Search extends StatelessWidget {
                 onChanged: (value) => state.runSearch(value),
               ),
             ),
-            const SizedBox(
-              height: 16,
-            ),
             Expanded(
               child: Consumer<SearchProvider>(builder: (context, state, _) {
                 if (state.state == ResultState.loading) {
