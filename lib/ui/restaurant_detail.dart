@@ -507,77 +507,102 @@ class RestaurantDetailPage extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(
-            child: Text(
-              'Give some review',
+        return SizedBox(
+          child: AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Name',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Flexible(
+                  child: TextField(
+                    controller: nameController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      hintText: 'John Doe',
+                      hintStyle: TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    onChanged: (value) => name = value,
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Text(
+                    'Review',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: TextField(
+                    controller: reviewController,
+                    decoration: const InputDecoration(
+                      hintText: 'Write your review',
+                      hintStyle: TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    onChanged: (value) => review = value,
+                  ),
+                ),
+              ],
             ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  hintText: 'Name',
-                ),
-                onChanged: (value) => name = value,
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  nameController.clear();
+                  reviewController.clear();
+                },
+                child:
+                    const Text('Cancel', style: TextStyle(color: Colors.red)),
               ),
-              TextField(
-                controller: reviewController,
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-                decoration: const InputDecoration(
-                  hintText: 'Review',
-                ),
-                onChanged: (value) => review = value,
+              TextButton(
+                onPressed: () {
+                  if (name.isEmpty || review.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Name and Review cannot be empty'),
+                      ),
+                    );
+                  } else {
+                    review_provider.ReviewProvider(apiService: ApiService())
+                        .submitReview(id, name, review)
+                        .then((value) {
+                      if (value.error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Failed to submit review'),
+                          ),
+                        );
+                      } else {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Review submitted'),
+                          ),
+                        );
+                        nameController.clear();
+                        reviewController.clear();
+                      }
+                    });
+                  }
+                },
+                child:
+                    const Text('Send', style: TextStyle(color: secondaryColor)),
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                nameController.clear();
-                reviewController.clear();
-              },
-              child: const Text('Cancel', style: TextStyle(color: Colors.red)),
-            ),
-            TextButton(
-              onPressed: () {
-                if (name.isEmpty || review.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Name and Review cannot be empty'),
-                    ),
-                  );
-                } else {
-                  review_provider.ReviewProvider(apiService: ApiService())
-                      .submitReview(id, name, review)
-                      .then((value) {
-                    if (value.error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Failed to submit review'),
-                        ),
-                      );
-                    } else {
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Review submitted'),
-                        ),
-                      );
-                      nameController.clear();
-                      reviewController.clear();
-                    }
-                  });
-                }
-              },
-              child:
-                  const Text('Send', style: TextStyle(color: secondaryColor)),
-            ),
-          ],
         );
       },
     );
