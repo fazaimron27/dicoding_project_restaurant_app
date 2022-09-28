@@ -4,6 +4,7 @@ import 'package:dicoding_project_restaurant_app/common/styles.dart';
 import 'package:dicoding_project_restaurant_app/utils/string_utils.dart';
 import 'package:dicoding_project_restaurant_app/utils/custom_error_exception.dart';
 import 'package:dicoding_project_restaurant_app/provider/restaurant_detail_provider.dart';
+import 'package:dicoding_project_restaurant_app/utils/result_state.dart';
 
 class Review extends StatelessWidget {
   static const routeName = '/review';

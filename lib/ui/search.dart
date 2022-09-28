@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
 import 'package:dicoding_project_restaurant_app/widgets/card_search.dart';
 import 'package:dicoding_project_restaurant_app/provider/search_provider.dart';
 import 'package:dicoding_project_restaurant_app/utils/custom_error_exception.dart';
-import 'package:provider/provider.dart';
+import 'package:dicoding_project_restaurant_app/utils/result_state.dart';
 
 class Search extends StatelessWidget {
   const Search({Key? key}) : super(key: key);

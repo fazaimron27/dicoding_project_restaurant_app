@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
 import 'package:dicoding_project_restaurant_app/data/models/review_response.dart';
-
-enum ResultState { loading, noData, hasData, error }
+import 'package:dicoding_project_restaurant_app/utils/result_state.dart';
 
 class ReviewProvider extends ChangeNotifier {
   final ApiService apiService;

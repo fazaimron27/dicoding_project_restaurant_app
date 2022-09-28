@@ -5,6 +5,7 @@ import 'package:dicoding_project_restaurant_app/ui/review.dart';
 import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
 import 'package:dicoding_project_restaurant_app/utils/string_utils.dart';
 import 'package:dicoding_project_restaurant_app/utils/custom_error_exception.dart';
+import 'package:dicoding_project_restaurant_app/utils/result_state.dart';
 import 'package:dicoding_project_restaurant_app/provider/review_provider.dart'
     as review_provider;
 import 'package:dicoding_project_restaurant_app/provider/restaurant_detail_provider.dart'
@@ -21,16 +22,14 @@ class RestaurantDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<restaurant_detai_provider.RestaurantDetailProvider>(
       builder: (context, state, _) {
-        if (state.state == restaurant_detai_provider.ResultState.loading) {
+        if (state.state == ResultState.loading) {
           return const Center(
               child: CircularProgressIndicator(
             color: secondaryColor,
           ));
-        } else if (state.state ==
-            restaurant_detai_provider.ResultState.hasData) {
+        } else if (state.state == ResultState.hasData) {
           return _buildDetailRestaurant(state, context);
-        } else if (state.state ==
-            restaurant_detai_provider.ResultState.noData) {
+        } else if (state.state == ResultState.noData) {
           return _buildHasError(state, context);
         } else {
           return _buildError(context);
