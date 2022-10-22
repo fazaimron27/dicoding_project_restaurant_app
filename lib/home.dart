@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:developer' as developer;
+import 'package:dicoding_project_restaurant_app/ui/favorite_restaurants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
-import 'package:dicoding_project_restaurant_app/ui/restaurants.dart';
 import 'package:dicoding_project_restaurant_app/ui/search.dart';
+import 'package:dicoding_project_restaurant_app/ui/restaurants.dart';
 import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
+import 'package:dicoding_project_restaurant_app/data/db/database_helper.dart';
 import 'package:dicoding_project_restaurant_app/provider/search_provider.dart';
+import 'package:dicoding_project_restaurant_app/provider/database_provider.dart';
 import 'package:dicoding_project_restaurant_app/provider/restaurant_provider.dart';
 import 'package:dicoding_project_restaurant_app/utils/custom_error_exception.dart';
 
@@ -68,12 +71,20 @@ class HomeState extends State<Home> {
   static final List<Widget> _pages = <Widget>[
     ChangeNotifierProvider<RestaurantsProvider>(
       create: (_) => RestaurantsProvider(apiService: ApiService()),
-      child: const Restaurants(),
+      child: ChangeNotifierProvider<DatabaseProvider>(
+        create: (_) => DatabaseProvider(databaseHelper: DatabaseHelper()),
+        child: const Restaurants(),
+      ),
+    ),
+    ChangeNotifierProvider<DatabaseProvider>(
+      create: (_) => DatabaseProvider(databaseHelper: DatabaseHelper()),
+      child: const FavoriteRestaurants(),
     ),
     ChangeNotifierProvider<SearchProvider>(
       create: (_) => SearchProvider(apiService: ApiService()),
       child: const Search(),
     ),
+    const Text('Settings'),
   ];
 
   void _onItemTapped(int index) {
@@ -114,6 +125,7 @@ class HomeState extends State<Home> {
           ),
           child: BottomNavigationBar(
             fixedColor: secondaryColor,
+            unselectedItemColor: Colors.grey,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.food_bank_outlined),
@@ -121,9 +133,19 @@ class HomeState extends State<Home> {
                 activeIcon: Icon(Icons.food_bank_outlined),
               ),
               BottomNavigationBarItem(
+                icon: Icon(Icons.favorite_border),
+                label: 'Favorites',
+                activeIcon: Icon(Icons.favorite),
+              ),
+              BottomNavigationBarItem(
                 icon: Icon(Icons.search),
                 label: 'Search',
                 activeIcon: Icon(Icons.search_sharp),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: 'Settings',
+                activeIcon: Icon(Icons.settings),
               ),
             ],
             currentIndex: _selectedIndex,

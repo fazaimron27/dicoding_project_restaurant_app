@@ -1,3 +1,5 @@
+import 'package:dicoding_project_restaurant_app/data/db/database_helper.dart';
+import 'package:dicoding_project_restaurant_app/provider/database_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
@@ -35,13 +37,15 @@ class MyApp extends StatelessWidget {
         SplashScreen.routeName: (context) => const SplashScreen(),
         Home.routeName: (context) => const Home(),
         RestaurantDetailPage.routeName: (context) => ChangeNotifierProvider(
-              create: (_) => RestaurantDetailProvider(
-                  apiService: ApiService(),
-                  id: ModalRoute.of(context)!.settings.arguments as String),
+            create: (_) => RestaurantDetailProvider(
+                apiService: ApiService(),
+                id: ModalRoute.of(context)!.settings.arguments as String),
+            child: ChangeNotifierProvider<DatabaseProvider>(
+              create: (_) => DatabaseProvider(databaseHelper: DatabaseHelper()),
               child: RestaurantDetailPage(
                 id: ModalRoute.of(context)!.settings.arguments as String,
               ),
-            ),
+            )),
         Review.routeName: (context) => ChangeNotifierProvider(
               create: (_) => RestaurantDetailProvider(
                   apiService: ApiService(),
