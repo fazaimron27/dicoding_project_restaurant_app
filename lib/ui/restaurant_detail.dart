@@ -113,8 +113,9 @@ class RestaurantDetailPage extends StatelessWidget {
   }
 
   Scaffold _buildDetailRestaurant(
-      restaurant_detai_provider.RestaurantDetailProvider state,
-      BuildContext context) {
+    restaurant_detai_provider.RestaurantDetailProvider state,
+    BuildContext context,
+  ) {
     TextEditingController nameController = TextEditingController();
     TextEditingController reviewController = TextEditingController();
     String name = '';
