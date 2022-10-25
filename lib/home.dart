@@ -1,18 +1,22 @@
 import 'dart:async';
 import 'dart:developer' as developer;
-import 'package:dicoding_project_restaurant_app/ui/favorite_restaurants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
 import 'package:dicoding_project_restaurant_app/ui/search.dart';
+import 'package:dicoding_project_restaurant_app/ui/settings.dart';
 import 'package:dicoding_project_restaurant_app/ui/restaurants.dart';
+import 'package:dicoding_project_restaurant_app/ui/restaurant_detail.dart';
+import 'package:dicoding_project_restaurant_app/ui/favorite_restaurants.dart';
 import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
 import 'package:dicoding_project_restaurant_app/data/db/database_helper.dart';
 import 'package:dicoding_project_restaurant_app/provider/search_provider.dart';
 import 'package:dicoding_project_restaurant_app/provider/database_provider.dart';
 import 'package:dicoding_project_restaurant_app/provider/restaurant_provider.dart';
+import 'package:dicoding_project_restaurant_app/provider/scheduling_provider.dart';
+import 'package:dicoding_project_restaurant_app/utils/notification_helper.dart';
 import 'package:dicoding_project_restaurant_app/utils/custom_error_exception.dart';
 
 class Home extends StatefulWidget {
@@ -28,6 +32,7 @@ class HomeState extends State<Home> {
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  final NotificationHelper _notificationHelper = NotificationHelper();
 
   @override
   void initState() {
@@ -36,11 +41,15 @@ class HomeState extends State<Home> {
 
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+
+    _notificationHelper
+        .configureSelectNotificationSubject(RestaurantDetailPage.routeName);
   }
 
   @override
   void dispose() {
     _connectivitySubscription.cancel();
+    selectNotificationSubject.close();
     super.dispose();
   }
 
@@ -84,7 +93,10 @@ class HomeState extends State<Home> {
       create: (_) => SearchProvider(apiService: ApiService()),
       child: const Search(),
     ),
-    const Text('Settings'),
+    ChangeNotifierProvider<SchedulingProvider>(
+      create: (_) => SchedulingProvider(),
+      child: const SettingsPage(),
+    ),
   ];
 
   void _onItemTapped(int index) {
