@@ -1,3 +1,4 @@
+import 'package:dicoding_project_restaurant_app/provider/preferences_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
@@ -9,39 +10,63 @@ class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
   Widget _buildList(BuildContext context) {
-    return ListView(
-      children: [
-        Material(
-          child: ListTile(
-            title: const Text('Scheduling Restaurant'),
-            trailing: Consumer<SchedulingProvider>(
-              builder: (context, scheduled, _) {
-                return Switch.adaptive(
-                  value: scheduled.isScheduled,
-                  onChanged: (value) async {
-                    scheduled.scheduledRestaurant(value);
+    return Consumer<PreferencesProvider>(
+      builder: (context, provider, child) {
+        return ListView(
+          children: [
+            Material(
+              child: ListTile(
+                title: const Text('Scheduling Restaurant'),
+                trailing: Consumer<SchedulingProvider>(
+                  builder: (context, scheduled, _) {
+                    return Switch.adaptive(
+                      value: provider.isDailyRecommendationActive,
+                      onChanged: (value) async {
+                        scheduled.scheduledRestaurant(value);
+                        provider.enableDailyRecommendation(value);
+                        if (value) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Scheduling Restaurant is Active',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Scheduling Restaurant is Inactive',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    );
                   },
-                );
-              },
+                ),
+              ),
             ),
-          ),
-        ),
-        Material(
-          child: ListTile(
-            title: const Text('Show Recommended Restaurant Now'),
-            trailing: Consumer<SchedulingProvider>(
-              builder: (context, scheduled, _) {
-                return IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () {
-                    scheduled.scheduledNow();
+            Material(
+              child: ListTile(
+                title: const Text('Show Recommended Restaurant Now'),
+                trailing: Consumer<SchedulingProvider>(
+                  builder: (context, scheduled, _) {
+                    return IconButton(
+                      icon: const Icon(Icons.refresh),
+                      onPressed: () {
+                        scheduled.scheduledNow();
+                      },
+                    );
                   },
-                );
-              },
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 

@@ -12,12 +12,15 @@ import 'package:dicoding_project_restaurant_app/ui/restaurant_detail.dart';
 import 'package:dicoding_project_restaurant_app/ui/favorite_restaurants.dart';
 import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
 import 'package:dicoding_project_restaurant_app/data/db/database_helper.dart';
+import 'package:dicoding_project_restaurant_app/data/preferences/preferences_helper.dart';
 import 'package:dicoding_project_restaurant_app/provider/search_provider.dart';
 import 'package:dicoding_project_restaurant_app/provider/database_provider.dart';
 import 'package:dicoding_project_restaurant_app/provider/restaurant_provider.dart';
 import 'package:dicoding_project_restaurant_app/provider/scheduling_provider.dart';
+import 'package:dicoding_project_restaurant_app/provider/preferences_provider.dart';
 import 'package:dicoding_project_restaurant_app/utils/notification_helper.dart';
 import 'package:dicoding_project_restaurant_app/utils/custom_error_exception.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   static const routeName = '/home';
@@ -95,7 +98,14 @@ class HomeState extends State<Home> {
     ),
     ChangeNotifierProvider<SchedulingProvider>(
       create: (_) => SchedulingProvider(),
-      child: const SettingsPage(),
+      child: ChangeNotifierProvider<PreferencesProvider>(
+        create: (_) => PreferencesProvider(
+          preferencesHelper: PreferencesHelper(
+            sharedPreferences: SharedPreferences.getInstance(),
+          ),
+        ),
+        child: const SettingsPage(),
+      ),
     ),
   ];
 
