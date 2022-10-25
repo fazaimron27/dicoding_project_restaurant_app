@@ -17,6 +17,18 @@ class ApiService {
     }
   }
 
+  Future<RestaurantsResult> getRandomRestaurant() async {
+    final response = await http.get(Uri.parse("${_baseUrl}list"));
+
+    if (response.statusCode == 200) {
+      final result = RestaurantsResult.fromJson(json.decode(response.body));
+      result.restaurants.shuffle();
+      return result;
+    } else {
+      throw Exception('Failed to load restaurants');
+    }
+  }
+
   Future<RestaurantDetail> getRestaurantById(id) async {
     final response = await http.get(Uri.parse("${_baseUrl}detail/$id"));
     if (response.statusCode == 200) {
