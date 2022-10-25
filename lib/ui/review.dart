@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
+import 'package:dicoding_project_restaurant_app/common/navigation.dart';
 import 'package:dicoding_project_restaurant_app/utils/string_utils.dart';
 import 'package:dicoding_project_restaurant_app/utils/custom_error_exception.dart';
 import 'package:dicoding_project_restaurant_app/provider/restaurant_detail_provider.dart';
@@ -52,7 +53,7 @@ class Review extends StatelessWidget {
               side: const BorderSide(color: secondaryColor),
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigation.back();
             },
             child: const Text(
               'Back',
@@ -89,7 +90,7 @@ class Review extends StatelessWidget {
               side: const BorderSide(color: secondaryColor),
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigation.back();
             },
             child: const Text(
               'Back',

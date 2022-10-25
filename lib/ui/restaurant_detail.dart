@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dicoding_project_restaurant_app/common/styles.dart';
+import 'package:dicoding_project_restaurant_app/common/navigation.dart';
 import 'package:dicoding_project_restaurant_app/ui/review.dart';
 import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
 import 'package:dicoding_project_restaurant_app/utils/string_utils.dart';
@@ -57,7 +58,7 @@ class RestaurantDetailPage extends StatelessWidget {
               side: const BorderSide(color: secondaryColor),
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigation.back();
             },
             child: const Text(
               'Back',
@@ -95,7 +96,7 @@ class RestaurantDetailPage extends StatelessWidget {
               side: const BorderSide(color: secondaryColor),
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigation.back();
             },
             child: const Text(
               'Back',
@@ -159,7 +160,7 @@ class RestaurantDetailPage extends StatelessWidget {
                               child: IconButton(
                                 icon: const Icon(Icons.arrow_back),
                                 onPressed: () {
-                                  Navigator.pop(context);
+                                  Navigation.back();
                                 },
                               ),
                             ),
@@ -452,8 +453,8 @@ class RestaurantDetailPage extends StatelessWidget {
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, Review.routeName,
-                                    arguments: state.result.restaurant.id);
+                                Navigation.intentWithData(Review.routeName,
+                                    state.result.restaurant.id);
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
@@ -561,7 +562,7 @@ class RestaurantDetailPage extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigation.back();
                   nameController.clear();
                   reviewController.clear();
                 },
@@ -587,7 +588,7 @@ class RestaurantDetailPage extends StatelessWidget {
                           ),
                         );
                       } else {
-                        Navigator.of(context).pop();
+                        Navigation.back();
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Review submitted'),

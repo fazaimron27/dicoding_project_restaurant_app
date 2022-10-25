@@ -1,5 +1,6 @@
-import 'package:dicoding_project_restaurant_app/common/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:dicoding_project_restaurant_app/common/styles.dart';
+import 'package:dicoding_project_restaurant_app/common/navigation.dart';
 import 'package:dicoding_project_restaurant_app/utils/ratings.dart';
 import 'package:dicoding_project_restaurant_app/utils/string_utils.dart';
 import 'package:dicoding_project_restaurant_app/data/models/restaurant.dart';
@@ -21,8 +22,8 @@ class CardRestaurant extends StatelessWidget {
             var isFavorite = snapshot.data ?? false;
             return GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, RestaurantDetailPage.routeName,
-                    arguments: restaurant.id);
+                Navigation.intentWithData(
+                    RestaurantDetailPage.routeName, restaurant.id);
               },
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

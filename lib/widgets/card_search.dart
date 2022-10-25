@@ -1,6 +1,7 @@
-import 'package:dicoding_project_restaurant_app/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:dicoding_project_restaurant_app/common/navigation.dart';
 import 'package:dicoding_project_restaurant_app/utils/ratings.dart';
+import 'package:dicoding_project_restaurant_app/utils/string_utils.dart';
 import 'package:dicoding_project_restaurant_app/data/models/restaurant_search.dart';
 import 'package:dicoding_project_restaurant_app/ui/restaurant_detail.dart';
 
@@ -12,8 +13,8 @@ class CardSearch extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, RestaurantDetailPage.routeName,
-            arguments: restaurant.id);
+        Navigation.intentWithData(
+            RestaurantDetailPage.routeName, restaurant.id);
       },
       child: Padding(
         padding: const EdgeInsets.all(16.0),
