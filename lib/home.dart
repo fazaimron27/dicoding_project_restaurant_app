@@ -92,9 +92,16 @@ class HomeState extends State<Home> {
       create: (_) => DatabaseProvider(databaseHelper: DatabaseHelper()),
       child: const FavoriteRestaurants(),
     ),
+    // ChangeNotifierProvider<SearchProvider>(
+    //   create: (_) => SearchProvider(apiService: ApiService()),
+    //   child: const Search(),
+    // ),
     ChangeNotifierProvider<SearchProvider>(
       create: (_) => SearchProvider(apiService: ApiService()),
-      child: const Search(),
+      child: ChangeNotifierProvider<DatabaseProvider>(
+        create: (_) => DatabaseProvider(databaseHelper: DatabaseHelper()),
+        child: const Search(),
+      ),
     ),
     ChangeNotifierProvider<SchedulingProvider>(
       create: (_) => SchedulingProvider(),
