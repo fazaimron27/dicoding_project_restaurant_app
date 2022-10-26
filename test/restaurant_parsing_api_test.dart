@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dicoding_project_restaurant_app/data/api/api_testing.dart';
+import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
 import 'package:dicoding_project_restaurant_app/data/models/restaurant.dart';
 import 'package:dicoding_project_restaurant_app/data/models/restaurant_detail.dart';
 import 'package:dicoding_project_restaurant_app/data/models/restaurant_search.dart';
 
 void main() {
+  final ApiService apiService = ApiService();
   group(
     'Restaurant API Testing',
     () {
@@ -28,7 +29,7 @@ void main() {
           );
 
           expect(
-            await ApiTesting.getAllRestaurants(client),
+            await apiService.getAllRestaurants(client),
             isA<RestaurantsResult>(),
           );
         },
@@ -61,7 +62,7 @@ void main() {
           );
 
           expect(
-            await ApiTesting.getRestaurantById(
+            await apiService.getRestaurantById(
               client,
               'Restaurant Id Example',
             ),
@@ -86,7 +87,7 @@ void main() {
           );
 
           expect(
-            await ApiTesting.searchRestaurant(
+            await apiService.searchRestaurant(
               client,
               'Restaurant Name Example',
             ),
