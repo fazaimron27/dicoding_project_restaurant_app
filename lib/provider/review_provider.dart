@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
 import 'package:dicoding_project_restaurant_app/data/models/review_response.dart';
 import 'package:dicoding_project_restaurant_app/utils/result_state.dart';
@@ -23,7 +24,8 @@ class ReviewProvider extends ChangeNotifier {
     try {
       _state = ResultState.loading;
       notifyListeners();
-      final reviewResponse = await apiService.postReview(id, name, review);
+      final reviewResponse =
+          await apiService.postReview(http.Client(), id, name, review);
       if (reviewResponse.error) {
         _state = ResultState.error;
         notifyListeners();

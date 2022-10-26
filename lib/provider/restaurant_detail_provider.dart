@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:dicoding_project_restaurant_app/data/api/api_service.dart';
 import 'package:dicoding_project_restaurant_app/data/models/restaurant_detail.dart';
 import 'package:dicoding_project_restaurant_app/utils/result_state.dart';
@@ -28,7 +29,7 @@ class RestaurantDetailProvider extends ChangeNotifier {
     try {
       _state = ResultState.loading;
       notifyListeners();
-      final restaurant = await apiService.getRestaurantById(id);
+      final restaurant = await apiService.getRestaurantById(http.Client(), id);
       if (restaurant.error) {
         _state = ResultState.noData;
         notifyListeners();
